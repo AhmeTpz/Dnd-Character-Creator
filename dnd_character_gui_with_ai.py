@@ -5,7 +5,7 @@ import os
 import threading
 from PIL import Image, ImageTk
 from dnd_character_decorator import *
-from dnd_character_ai import create_prompt, generate_image
+from dnd_character_ai import create_prompt, generate_image, show_image_window
 
 
 class CharacterApp:
@@ -190,57 +190,55 @@ class CharacterApp:
         for widget in self.subclass_frame.winfo_children():
             widget.destroy()
 
-    def show_image(self, path):
-        try:
-            if path is None or not os.path.exists(path):
-                print("Görsel yolu geçersiz veya dosya bulunamadı.")
-                return
+    def on_image_progress(self, message):
+        """Update the UI with image generation progress"""
+        self.output.insert(tk.END, f"🔄 {message}\n")
+        self.output.see(tk.END)
+        self.root.update()
 
-            img = Image.open(path).resize((512, 512), Image.Resampling.LANCZOS)
-            self.tk_image = ImageTk.PhotoImage(img)
+    def on_image_complete(self, image_path, error=None):
+        """Handle image generation completion"""
+        if error:
+            self.output.insert(tk.END, f"❌ Görsel oluşturulurken hata: {error}\n")
+            messagebox.showerror("Hata", f"Görsel oluşturulurken hata: {error}")
+            return
 
-            if hasattr(self, "image_label"):
-                self.image_label.config(image=self.tk_image)
-            else:
-                self.image_label = tk.Label(self.root, image=self.tk_image)
-                self.image_label.pack(pady=10)
-
-        except Exception as e:
-            print(f"Görsel gösteriminde hata oluştu: {e}")
+        self.output.insert(tk.END, f"✅ Görsel başarıyla oluşturuldu: {image_path}\n")
+        # Show the image in a new window
+        show_image_window(image_path)
 
     def create_and_show_image(self):
+        """Create an image for the character using Flux API"""
         if not self.character:
             messagebox.showwarning("Uyarı", "Önce bir karakter oluşturmalısınız!")
             return
 
         # İlerleme bilgisi göster
+        self.output.delete("1.0", tk.END)
         self.output.insert(tk.END, "🎨 Görsel oluşturuluyor, lütfen bekleyin...\n")
         self.root.update()
 
+        # Prompt oluştur
         prompt = create_prompt(self.character)
         self.output.insert(tk.END, f"📝 Kullanılan prompt: {prompt}\n")
+        self.root.update()
 
-        def generate():
-            try:
-                img_path = generate_image(prompt)
+        # Save prompt for reference
+        try:
+            with open("prompt_output.txt", "w") as file:
+                file.write(prompt)
+        except Exception as e:
+            self.output.insert(tk.END, f"❌ Prompt kaydedilirken hata oluştu: {e}\n")
 
-                if img_path and os.path.exists(img_path):
-                    # Ana thread'de UI güncellemesi yap
-                    self.root.after(0, lambda: self.show_image(img_path))
-                    self.output.insert(tk.END, f"✅ Görsel başarıyla oluşturuldu!\n")
-                else:
-                    self.root.after(0, lambda: messagebox.showerror(
-                        "Hata",
-                        "Görsel oluşturulamadı. Fooocus'un çalıştığından emin olun!"
-                    ))
-                    self.output.insert(tk.END, "❌ Görsel oluşturulamadı!\n")
-            except Exception as e:
-                print(f"Görsel oluşturma hatası: {e}")
-                self.root.after(0, lambda: messagebox.showerror("Hata", f"Görsel oluşturma hatası: {e}"))
-                self.output.insert(tk.END, f"❌ Hata: {e}\n")
+        # Generate image in a separate thread to keep UI responsive
+        def generate_thread():
+            generate_image(
+                prompt,
+                callback=self.on_image_complete,
+                on_progress=self.on_image_progress
+            )
 
-        # Görsel oluşturmayı ayrı bir thread'de başlat
-        threading.Thread(target=generate, daemon=True).start()
+        threading.Thread(target=generate_thread, daemon=True).start()
 
 
 if __name__ == "__main__":
