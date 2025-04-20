@@ -1,6 +1,6 @@
 # 🧙‍♂️ DnD Character Creator
 
-DnD Character Creator, masaüstü bir uygulama olarak, Dungeons & Dragons (D&D) evrenine ait karakterleri kolayca oluşturmanıza olanak tanır. GUI destekli bu Python uygulaması, kullanıcıların sınıf, alt sınıf, seviye, ekipman seçerek özelleştirilmiş karakterler oluşturmasını ve hatta bu karakterler için AI destekli görseller üretmesini sağlar.
+DnD Character Creator, masaüstü bir uygulama olarak, Dungeons & Dragons (D&D) evrenine ait karakterleri kolayca oluşturmanıza olanak tanır. GUI destekli bu Python uygulaması, kullanıcıların sınıf, alt sınıf, seviye, ekipman seçerek özelleştirilmiş karakterler oluşturmasını ve hatta bu karakterler için AI destekli görseller üretmesini sağlar. "dnd_character_gui_with_ai.py" ve "dnd_character_gui.py" çalıştırabilirsiniz.
 
 ## ✨ Özellikler
 
