@@ -183,7 +183,7 @@ class CharacterApp:
 
     def show_character(self):
         if self.character:
-            description = f"‍💝Karakter: {self.character.get_description()}\n"
+            description = f"‍🧝  Karakter: {self.character.get_description()}\n"
             level = f"📊  Seviye: {self.character.get_level()}\n"
             power = f"⚔️  Güç: {self.character.get_power()}\n"
             armor = f"🛡️Zırh: {self.character.get_armor()}\n"
