@@ -7,7 +7,9 @@ from PIL import Image, ImageTk
 from dnd_character_decorator import *
 from dnd_character_ai import create_prompt, generate_image, show_image_window
 
-
+# ===================================================
+# MAIN APPLICATION CLASS / ANA UYGULAMA SINIFI
+# ===================================================
 class CharacterApp:
     def __init__(self, root):
         self.root = root
@@ -64,6 +66,9 @@ class CharacterApp:
         frame.pack(side="left", padx=10, pady=10, expand=True)
         return frame
 
+# ===================================================
+# UI COMPONENTS / ARAYÜZ BİLEŞENLERİ
+# ===================================================
     def create_widgets(self):
         main = tk.Frame(self.root, bg="#1e1e1e")
         main.pack(expand=True, fill="both", padx=20, pady=20)
@@ -109,6 +114,9 @@ class CharacterApp:
             self.create_equipment_button(armor_inner, armor, armor, self.add_armor,
                                          folders=["equipments"], img_size=(50, 50))
 
+# ===================================================
+# CHARACTER MANAGEMENT / KARAKTER YÖNETİMİ
+# ===================================================
     def select_class(self, cls):
         self.character = {"Fighter": Fighter(), "Ranger": Ranger(), "Sorcerer": Sorcerer()}[cls]
         self.level_bonus = {"Fighter": 2, "Ranger": 2, "Sorcerer": 3}[cls]
@@ -190,6 +198,9 @@ class CharacterApp:
         for widget in self.subclass_frame.winfo_children():
             widget.destroy()
 
+# ===================================================
+# AI IMAGE GENERATION / YAPAY ZEKA GÖRSEL OLUŞTURMA
+# ===================================================
     def on_image_progress(self, message):
         """Update the UI with image generation progress"""
         self.output.insert(tk.END, f"🔄 {message}\n")
@@ -204,7 +215,6 @@ class CharacterApp:
             return
 
         self.output.insert(tk.END, f"✅ Görsel başarıyla oluşturuldu: {image_path}\n")
-        # Show the image in a new window
         show_image_window(image_path)
 
     def create_and_show_image(self):
@@ -213,24 +223,20 @@ class CharacterApp:
             messagebox.showwarning("Uyarı", "Önce bir karakter oluşturmalısınız!")
             return
 
-        # İlerleme bilgisi göster
         self.output.delete("1.0", tk.END)
         self.output.insert(tk.END, "🎨 Görsel oluşturuluyor, lütfen bekleyin...\n")
         self.root.update()
 
-        # Prompt oluştur
         prompt = create_prompt(self.character)
         self.output.insert(tk.END, f"📝 Kullanılan prompt: {prompt}\n")
         self.root.update()
 
-        # Save prompt for reference
         try:
             with open("prompt_output.txt", "w") as file:
                 file.write(prompt)
         except Exception as e:
             self.output.insert(tk.END, f"❌ Prompt kaydedilirken hata oluştu: {e}\n")
 
-        # Generate image in a separate thread to keep UI responsive
         def generate_thread():
             generate_image(
                 prompt,
@@ -239,7 +245,6 @@ class CharacterApp:
             )
 
         threading.Thread(target=generate_thread, daemon=True).start()
-
 
 if __name__ == "__main__":
     root = tk.Tk()

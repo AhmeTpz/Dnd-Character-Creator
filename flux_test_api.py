@@ -1,7 +1,6 @@
 import os
 import fal_client
 
-# API Key (senin sağladığın iki parçalı key, birleşik olarak burada)
 os.environ["FAL_KEY"] = "7d4cd77d-93a4-44c3-b0e0-d9e5b62e666e:f4eb507827d9182b1dcaf697a357493f"
 
 def on_queue_update(update):

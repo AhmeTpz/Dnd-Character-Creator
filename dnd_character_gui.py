@@ -4,7 +4,9 @@ from PIL import Image, ImageTk
 import os
 from dnd_character_decorator import *
 
-
+# ===================================================
+# MAIN APPLICATION CLASS / ANA UYGULAMA SINIFI
+# ===================================================
 class CharacterApp:
     def __init__(self, root):
         self.root = root
@@ -61,6 +63,9 @@ class CharacterApp:
         frame.pack(side="left", padx=10, pady=10, expand=True)
         return frame
 
+# ===================================================
+# UI COMPONENTS / ARAYÜZ BİLEŞENLERİ
+# ===================================================
     def create_widgets(self):
         main = tk.Frame(self.root, bg="#1e1e1e")
         main.pack(expand=True, fill="both", padx=20, pady=20)
@@ -104,6 +109,9 @@ class CharacterApp:
             self.create_equipment_button(armor_inner, armor, armor, self.add_armor,
                                          folders=["equipments"], img_size=(50, 50))
 
+# ===================================================
+# CHARACTER MANAGEMENT / KARAKTER YÖNETİMİ
+# ===================================================
     def select_class(self, cls):
         self.character = {"Fighter": Fighter(), "Ranger": Ranger(), "Sorcerer": Sorcerer()}[cls]
         self.level_bonus = {"Fighter": 2, "Ranger": 2, "Sorcerer": 3}[cls]
@@ -184,7 +192,6 @@ class CharacterApp:
         self.output.delete("1.0", tk.END)
         for widget in self.subclass_frame.winfo_children():
             widget.destroy()
-
 
 if __name__ == "__main__":
     root = tk.Tk()

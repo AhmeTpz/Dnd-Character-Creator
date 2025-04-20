@@ -7,34 +7,30 @@ from PIL import Image, ImageTk
 import requests
 from io import BytesIO
 
-# API Key setup
 API_KEY = "7d4cd77d-93a4-44c3-b0e0-d9e5b62e666e:f4eb507827d9182b1dcaf697a357493f"
 
-
+# ===================================================
+# CHARACTER PROMPT GENERATION / KARAKTER PROMPT OLUŞTURMA
+# ===================================================
 def create_prompt(character):
-    """Creates a detailed prompt for image generation based on character attributes"""
     if not character:
         return "Fantasy character in a dungeon setting"
 
-    # Base description
     base_class = character.__class__.__name__
     if hasattr(character, 'decorated'):
         base_class = character.decorated.__class__.__name__
 
-    # Get character components
     description = character.get_description()
     level = character.get_level()
     skills = character.get_skills()
     equipment = character.get_equipment()
 
-    # Character race and gender (random for now)
     races = ["Human", "Elf", "Dwarf", "Half-Elf", "Half-Orc", "Tiefling", "Dragonborn"]
     genders = ["male", "female"]
     import random
     race = random.choice(races)
     gender = random.choice(genders)
 
-    # Extract class and subclass information
     class_info = []
     if "Fighter" in description:
         class_info.append("Fighter")
@@ -54,12 +50,10 @@ def create_prompt(character):
         if subclass in description:
             subclass_info.append(subclass)
 
-    # Build class description
     class_desc = f"{race} {gender} {' + '.join(class_info)}"
     if subclass_info:
         class_desc += f" + {' + '.join(subclass_info)}"
 
-    # Extract equipment
     weapons = []
     armor_items = []
 
@@ -72,7 +66,6 @@ def create_prompt(character):
         if any(armor in item for armor in armor_types):
             armor_items.append(item)
 
-    # Format weapons and armor descriptions
     weapon_desc = ""
     if weapons:
         weapon_terms = {
@@ -101,7 +94,6 @@ def create_prompt(character):
         armor_list = [armor_terms.get(a, a.lower()) for a in armor_items]
         armor_desc = f"wearing {', '.join(armor_list)}"
 
-    # Random character features
     hair_colors = ["black", "brown", "blonde", "red", "white", "silver", "blue", "purple", "green"]
     eye_colors = ["brown", "blue", "green", "amber", "gray", "purple", "red"]
 
@@ -110,7 +102,6 @@ def create_prompt(character):
 
     features_desc = f"with {hair_color} hair and {eye_color} eyes"
 
-    # Character accessories based on class
     accessories = []
     if "Ranger" in class_info:
         accessories.extend(["a map and compass", "animal companion"])
@@ -123,7 +114,6 @@ def create_prompt(character):
     if accessories:
         accessories_desc = f"with {', '.join(random.sample(accessories, min(2, len(accessories))))}"
 
-    # Environment based on class
     environments = {
         "Fighter": ["castle courtyard", "training grounds", "battlefield", "arena"],
         "Ranger": ["wilderness campsite", "forest trail", "mountain pass", "hidden cave"],
@@ -139,21 +129,81 @@ def create_prompt(character):
     if env_options:
         environment = random.choice(env_options)
 
-    # Lighting and atmosphere
     times = ["dawn", "dusk", "night", "morning", "afternoon"]
     atmospheres = ["foggy", "stormy", "clear", "moonlit", "sunlit"]
 
     time_of_day = random.choice(times)
     atmosphere = random.choice(atmospheres)
 
-    # Build the complete prompt
-    prompt = f"A experienced {class_desc}, {weapon_desc}, {armor_desc}, {features_desc}, {accessories_desc}, in a traditional adventure pose, in a {environment} on a {atmosphere} {time_of_day}. All weapons must be properly positioned in the character's hands or appropriate holsters/sheaths. Character must be depicted in an appropriate and respectful manner with proper weapon placement. Full body portrait, detailed illustration, highly detailed, epic lighting, dramatic composition."
+    experience_level = "novice"
+    aura_effects = ""
+    battle_damage = ""
+    magical_effects = ""
+
+    if level >= 5:
+        experience_level = "experienced"
+        battle_damage = "with minor battle scars"
+    if level >= 10:
+        experience_level = "veteran"
+        battle_damage = "with prominent battle scars and weathered armor"
+        aura_effects = "surrounded by a faint aura of experience"
+    if level >= 15:
+        experience_level = "master"
+        battle_damage = "with legendary battle scars and masterfully crafted armor"
+        aura_effects = "radiating a powerful aura of mastery"
+        magical_effects = "with subtle magical energy emanating from their equipment"
+    if level >= 20:
+        experience_level = "legendary"
+        battle_damage = "with legendary battle scars and divine armor"
+        aura_effects = "radiating a divine aura of power"
+        magical_effects = "with powerful magical energy swirling around them"
+
+    level_details = {
+        "novice": "young and eager",
+        "experienced": "confident and battle-hardened",
+        "veteran": "seasoned and battle-scarred",
+        "master": "renowned and formidable",
+        "legendary": "mythical and awe-inspiring"
+    }
+
+    class_effects = {
+        "Fighter": {
+            "novice": "with basic combat stance",
+            "experienced": "with expert combat stance",
+            "veteran": "with masterful combat stance",
+            "master": "with legendary combat stance",
+            "legendary": "with divine combat stance"
+        },
+        "Ranger": {
+            "novice": "with basic tracking skills",
+            "experienced": "with expert tracking skills",
+            "veteran": "with masterful tracking skills",
+            "master": "with legendary tracking skills",
+            "legendary": "with divine tracking skills"
+        },
+        "Sorcerer": {
+            "novice": "with basic magical aura",
+            "experienced": "with expert magical aura",
+            "veteran": "with masterful magical aura",
+            "master": "with legendary magical aura",
+            "legendary": "with divine magical aura"
+        }
+    }
+
+    class_effect = ""
+    for cls in class_info:
+        if cls in class_effects:
+            class_effect = class_effects[cls][experience_level]
+            break
+
+    prompt = f"A {level_details[experience_level]} {experience_level} {class_desc}, {weapon_desc}, {armor_desc}, {features_desc}, {accessories_desc}, {class_effect}, {battle_damage}, {aura_effects}, {magical_effects}, in a traditional adventure pose, in a {environment} on a {atmosphere} {time_of_day}. All weapons must be properly positioned in the character's hands or appropriate holsters/sheaths. Character must be depicted in an appropriate and respectful manner with proper weapon placement. Full body portrait, highly detailed illustration, epic lighting, dramatic composition."
 
     return prompt
 
-
+# ===================================================
+# IMAGE GENERATION / GÖRSEL OLUŞTURMA
+# ===================================================
 def generate_image(prompt, callback=None, on_progress=None):
-    """Generates an image using Flux API and returns the image URL"""
     os.environ["FAL_KEY"] = API_KEY
 
     def on_queue_update(update):
@@ -163,12 +213,11 @@ def generate_image(prompt, callback=None, on_progress=None):
                     on_progress(log["message"])
 
     try:
-        # Generate image
         result = fal_client.subscribe(
             "fal-ai/flux/schnell",
             arguments={
                 "prompt": prompt,
-                "image_size": "portrait_4_3",  # Changed from "square_1_1" to "square"
+                "image_size": "portrait_4_3",
                 "num_images": 1,
                 "num_inference_steps": 4
             },
@@ -176,14 +225,11 @@ def generate_image(prompt, callback=None, on_progress=None):
             on_queue_update=on_queue_update
         )
 
-        # Get image URL
         image_url = result["images"][0]["url"]
 
-        # Download the image
         response = requests.get(image_url)
         img_data = BytesIO(response.content)
 
-        # Save the image locally
         img = Image.open(img_data)
         timestamp = int(time.time())
         save_path = f"generated_images/character_image_{timestamp}.png"
@@ -200,48 +246,40 @@ def generate_image(prompt, callback=None, on_progress=None):
             callback(None, str(e))
         return None, str(e)
 
-
+# ===================================================
+# IMAGE DISPLAY / GÖRSEL GÖSTERME
+# ===================================================
 def show_image_window(image_path):
-    """Opens a new window to display the generated image with improved size"""
     if not image_path or not os.path.exists(image_path):
         return
 
     window = tk.Toplevel()
     window.title("D&D Karakter Görseli")
-    window.configure(bg="#1e1e1e")  # Koyu tema
+    window.configure(bg="#1e1e1e")
 
-    # Ana pencerenin ortasında açılması için
-    window.geometry("800x900")  # Daha büyük pencere boyutu
+    window.geometry("800x900")
 
-    # Frame oluştur
     frame = tk.Frame(window, bg="#1e1e1e", padx=20, pady=20)
     frame.pack(fill="both", expand=True)
 
-    # Görüntüyü orijinal boyutuna yakın bir şekilde yükle
     img = Image.open(image_path)
 
-    # Orijinal görüntü boyutlarını al
     original_width, original_height = img.size
 
-    # Görüntü boyutunu daha büyük yap (2x)
-    display_width = min(original_width * 2, 700)  # Maksimum genişlik
+    display_width = min(original_width * 2, 700)
     display_height = int((display_width / original_width) * original_height)
 
-    # Yüksek kaliteli yeniden boyutlandırma
     img = img.resize((display_width, display_height), Image.Resampling.LANCZOS)
     photo = ImageTk.PhotoImage(img)
 
-    # Görüntüyü göstermek için label oluştur
     label = tk.Label(frame, image=photo, bg="#1e1e1e")
-    label.image = photo  # Referansı koru
+    label.image = photo
     label.pack(padx=10, pady=10)
 
-    # Bilgi etiketi
     info_text = f"Görüntü Boyutu: {original_width}x{original_height} (Gösterilen: {display_width}x{display_height})"
     info_label = tk.Label(frame, text=info_text, fg="white", bg="#1e1e1e")
     info_label.pack(pady=(0, 10))
 
-    # Kaydet butonu
     button_frame = tk.Frame(frame, bg="#1e1e1e")
     button_frame.pack(pady=10)
 
@@ -252,7 +290,6 @@ def show_image_window(image_path):
                                                             ("JPEG files", "*.jpg"),
                                                             ("All files", "*.*")])
         if save_path:
-            # Orijinal görüntüyü kaydet (yeniden boyutlandırılmamış hali)
             original_img = Image.open(image_path)
             original_img.save(save_path)
             tk.messagebox.showinfo("Başarılı", f"Görsel kaydedildi: {save_path}")
@@ -260,23 +297,19 @@ def show_image_window(image_path):
     def open_folder():
         import os, subprocess
         folder_path = os.path.dirname(os.path.abspath(image_path))
-        # İşletim sistemine göre klasör açma komutu
-        if os.name == 'nt':  # Windows
+        if os.name == 'nt':
             os.startfile(folder_path)
-        elif os.name == 'posix':  # macOS veya Linux
+        elif os.name == 'posix':
             subprocess.call(['open' if sys.platform == 'darwin' else 'xdg-open', folder_path])
 
-    # Kaydet butonu
     save_btn = tk.Button(button_frame, text="Görseli Kaydet", command=save_image,
                          bg="#4CAF50", fg="white", width=15, height=2)
     save_btn.pack(side="left", padx=10)
 
-    # Klasörü aç butonu
     folder_btn = tk.Button(button_frame, text="Klasörü Aç", command=open_folder,
                            bg="#2196F3", fg="white", width=15, height=2)
     folder_btn.pack(side="left", padx=10)
 
-    # Pencereyi ekranın ortasında göster
     window.update_idletasks()
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()

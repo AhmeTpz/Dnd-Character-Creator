@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
-
+# ===================================================
+# BASE CLASSES / TEMEL SINIFLAR
+# ===================================================
 class Character(ABC):
     @abstractmethod
     def get_power(self): pass
@@ -20,7 +22,9 @@ class Character(ABC):
     @abstractmethod
     def get_equipment(self): pass
 
-
+# ===================================================
+# CHARACTER CLASSES / KARAKTER SINIFLARI
+# ===================================================
 class Fighter(Character):
     def __init__(self):
         self.level = 1
@@ -66,6 +70,9 @@ class Sorcerer(Character):
     def get_level(self): return self.level
     def get_equipment(self): return self.equipment
 
+# ===================================================
+# DECORATOR BASE CLASS / DEKORATÖR TEMEL SINIFI
+# ===================================================
 class CharacterDecorator(Character):
     def __init__(self, character):
         self.character = character
@@ -77,6 +84,9 @@ class CharacterDecorator(Character):
     def get_level(self): return self.character.get_level()
     def get_equipment(self): return self.character.get_equipment()
 
+# ===================================================
+# LEVEL DECORATOR / SEVİYE DEKORATÖRÜ
+# ===================================================
 class LevelUp(CharacterDecorator):
     def __init__(self, character, bonus):
         super().__init__(character)
@@ -88,6 +98,9 @@ class LevelUp(CharacterDecorator):
     def get_level(self):
         return self.character.get_level() + 1
 
+# ===================================================
+# FIGHTER SUBCLASS DECORATORS / SAVAŞÇI ALT SINIF DEKORATÖRLERİ
+# ===================================================
 class BattleMaster(CharacterDecorator):
     def get_power(self): return self.character.get_power() + 8
     def get_skills(self): return self.character.get_skills() + ["Precision Attack"]
@@ -108,6 +121,9 @@ class ArcaneArcher(CharacterDecorator):
     def get_skills(self): return self.character.get_skills() + ["Arcane Shoot"]
     def get_description(self): return self.character.get_description() + " + Arcane Archer"
 
+# ===================================================
+# RANGER SUBCLASS DECORATORS / AVCI ALT SINIF DEKORATÖRLERİ
+# ===================================================
 class BeastMaster(CharacterDecorator):
     def get_power(self): return self.character.get_power() + 6
     def get_skills(self): return self.character.get_skills() + ["Animal Handling"]
@@ -128,6 +144,9 @@ class Swarmkeeper(CharacterDecorator):
     def get_skills(self): return self.character.get_skills() + ["Legion of Bees"]
     def get_description(self): return self.character.get_description() + " + Swarmkeeper"
 
+# ===================================================
+# SORCERER SUBCLASS DECORATORS / BÜYÜCÜ ALT SINIF DEKORATÖRLERİ
+# ===================================================
 class DraconicBloodline(CharacterDecorator):
     def get_power(self): return self.character.get_power() + 8
     def get_skills(self): return self.character.get_skills() + ["Dragon Ancestry", "Fly"]
@@ -148,6 +167,9 @@ class ShadowMagic(CharacterDecorator):
     def get_skills(self): return self.character.get_skills() + ["Superior Darkvision", "Shadow Walk"]
     def get_description(self): return self.character.get_description() + " + Shadow Magic"
 
+# ===================================================
+# WEAPON DECORATORS / SİLAH DEKORATÖRLERİ
+# ===================================================
 class Sword(CharacterDecorator):
     def get_power(self): return self.character.get_power() + 6
     def get_equipment(self): return self.character.get_equipment() + ["Sword"]
@@ -168,6 +190,9 @@ class Staff(CharacterDecorator):
     def get_power(self): return self.character.get_power() + 4
     def get_equipment(self): return self.character.get_equipment() + ["Staff"]
 
+# ===================================================
+# ARMOR DECORATORS / ZIRH DEKORATÖRLERİ
+# ===================================================
 class Hat(CharacterDecorator):
     def get_armor(self): return self.character.get_armor() + 2
     def get_equipment(self): return self.character.get_equipment() + ["Hat"]
