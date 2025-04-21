@@ -6,6 +6,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import requests
 from io import BytesIO
+import random
 
 API_KEY = "7d4cd77d-93a4-44c3-b0e0-d9e5b62e666e:f4eb507827d9182b1dcaf697a357493f"
 
@@ -25,11 +26,30 @@ def create_prompt(character):
     skills = character.get_skills()
     equipment = character.get_equipment()
 
-    races = ["Human", "Elf", "Dwarf", "Half-Elf", "Half-Orc", "Tiefling", "Dragonborn"]
-    genders = ["male", "female"]
-    import random
-    race = random.choice(races)
-    gender = random.choice(genders)
+    # Irk tanımlamaları
+    tiefling_colors = ["red", "blue", "purple", "black"]
+    tiefling_color = random.choice(tiefling_colors)
+
+    races = {
+        "Human": "human",
+        "Elf": "elf with pointy ears",
+        "Dwarf": "dwarf with beard",
+        "Half-Elf": "half-elf with pointy ears",
+        "Half-Orc": "green-skinned half-orc",
+        "Tiefling": f"{tiefling_color}-skinned humanoid with long curved horns, glowing eyes, a pointed tail, and infernal features",
+        "Dragonborn": "tall muscular humanoid with a dragon head, reptilian eyes, scaled body, clawed hands, and no tail"
+    }
+
+    # Cinsiyet ve fiziksel özellikler
+    genders = {
+        "male": "male",
+        "female": "female"
+    }
+
+    race = random.choice(list(races.keys()))
+    race_desc = races[race]
+    gender = random.choice(list(genders.keys()))
+    gender_desc = genders[gender]
 
     class_info = []
     if "Fighter" in description:
@@ -50,7 +70,7 @@ def create_prompt(character):
         if subclass in description:
             subclass_info.append(subclass)
 
-    class_desc = f"{race} {gender} {' + '.join(class_info)}"
+    class_desc = f"{race_desc} {gender_desc} {' + '.join(class_info)}"
     if subclass_info:
         class_desc += f" + {' + '.join(subclass_info)}"
 
@@ -69,29 +89,29 @@ def create_prompt(character):
     weapon_desc = ""
     if weapons:
         weapon_terms = {
-            "Sword": "sword",
-            "Bow": "composite bow",
-            "Dagger": "throwing knife",
-            "Axe": "battle axe",
-            "Staff": "magical staff"
+            "Sword": ["sword", "longsword", "steel sword"],
+            "Bow": ["composite bow", "longbow", "hunting bow"],
+            "Dagger": ["dagger", "short dagger", "throwing dagger"],
+            "Axe": ["battle axe", "war axe", "two-handed axe"],
+            "Staff": ["magical staff", "arcane staff", "spellcasting staff"]
         }
-        weapon_list = [weapon_terms.get(w, w.lower()) for w in weapons]
+        weapon_list = [random.choice(weapon_terms.get(w, [w.lower()])) for w in weapons]
         if len(weapons) > 1:
-            weapon_desc = f"dual-wielding {' and '.join(weapon_list)}, with weapons in proper combat position"
+            weapon_desc = f"carrying {' and '.join(weapon_list)}, each weapon properly stored in its sheath or held in hand"
         else:
             weapon_desc = f"wielding {' and '.join(weapon_list)}"
 
     armor_desc = ""
     if armor_items:
         armor_terms = {
-            "Hat": "wide-brimmed brown hat",
-            "Helmet": "ornate metal helmet",
-            "Chain Armor": "chainmail armor",
-            "Knight Armor": "ornate plate armor",
-            "Leather Boots": "sturdy brown leather boots",
-            "Plate Boots": "protective metal greaves"
+            "Hat": ["wide-brimmed hat", "adventurer's hat", "traveler's hat"],
+            "Helmet": ["metal helmet", "steel helmet", "knight's helmet"],
+            "Chain Armor": ["chainmail armor", "chain shirt", "mail armor"],
+            "Knight Armor": ["plate armor", "full plate", "knight's plate"],
+            "Leather Boots": ["leather boots", "traveling boots", "adventurer's boots"],
+            "Plate Boots": ["metal boots", "steel boots", "knight's boots"]
         }
-        armor_list = [armor_terms.get(a, a.lower()) for a in armor_items]
+        armor_list = [random.choice(armor_terms.get(a, [a.lower()])) for a in armor_items]
         armor_desc = f"wearing {', '.join(armor_list)}"
 
     hair_colors = ["black", "brown", "blonde", "red", "white", "silver", "blue", "purple", "green"]
@@ -104,11 +124,11 @@ def create_prompt(character):
 
     accessories = []
     if "Ranger" in class_info:
-        accessories.extend(["a map and compass", "animal companion"])
+        accessories.extend(["map and compass", "animal companion", "hunting gear"])
     if "Sorcerer" in class_info:
-        accessories.extend(["glowing magical orb", "arcane focus"])
+        accessories.extend(["magical orb", "arcane focus", "spellbook"])
     if "Fighter" in class_info:
-        accessories.extend(["shield with emblem", "battle scars"])
+        accessories.extend(["shield with emblem", "battle gear"])
 
     accessories_desc = ""
     if accessories:
@@ -159,44 +179,44 @@ def create_prompt(character):
         magical_effects = "with powerful magical energy swirling around them"
 
     level_details = {
-        "novice": "young and eager",
-        "experienced": "confident and battle-hardened",
-        "veteran": "seasoned and battle-scarred",
-        "master": "renowned and formidable",
-        "legendary": "mythical and awe-inspiring"
+        "novice": ["young and eager", "new adventurer", "beginner warrior"],
+        "experienced": ["confident and battle-hardened", "seasoned adventurer", "skilled warrior"],
+        "veteran": ["seasoned and battle-scarred", "experienced adventurer", "battle-tested warrior"],
+        "master": ["renowned and formidable", "master adventurer", "epic warrior"],
+        "legendary": ["mythical and awe-inspiring", "legendary adventurer", "legendary warrior"]
     }
 
     class_effects = {
         "Fighter": {
-            "novice": "with basic combat stance",
-            "experienced": "with expert combat stance",
-            "veteran": "with masterful combat stance",
-            "master": "with legendary combat stance",
-            "legendary": "with divine combat stance"
+            "novice": ["with basic combat stance", "in a fighting pose", "ready for battle"],
+            "experienced": ["with expert combat stance", "in a warrior's pose", "battle-ready"],
+            "veteran": ["with masterful combat stance", "in a veteran's pose", "battle-hardened"],
+            "master": ["with legendary combat stance", "in a master's pose", "battle-perfected"],
+            "legendary": ["with divine combat stance", "in an epic pose", "battle-transcended"]
         },
         "Ranger": {
-            "novice": "with basic tracking skills",
-            "experienced": "with expert tracking skills",
-            "veteran": "with masterful tracking skills",
-            "master": "with legendary tracking skills",
-            "legendary": "with divine tracking skills"
+            "novice": ["with basic tracking skills", "in a hunting pose", "ready to track"],
+            "experienced": ["with expert tracking skills", "in a ranger's pose", "tracking-ready"],
+            "veteran": ["with masterful tracking skills", "in a veteran's pose", "tracking-perfected"],
+            "master": ["with legendary tracking skills", "in a master's pose", "tracking-transcended"],
+            "legendary": ["with divine tracking skills", "in an epic pose", "tracking-mastered"]
         },
         "Sorcerer": {
-            "novice": "with basic magical aura",
-            "experienced": "with expert magical aura",
-            "veteran": "with masterful magical aura",
-            "master": "with legendary magical aura",
-            "legendary": "with divine magical aura"
+            "novice": ["with basic magical aura", "in a casting pose", "ready to cast"],
+            "experienced": ["with expert magical aura", "in a sorcerer's pose", "casting-ready"],
+            "veteran": ["with masterful magical aura", "in a veteran's pose", "casting-perfected"],
+            "master": ["with legendary magical aura", "in a master's pose", "casting-transcended"],
+            "legendary": ["with divine magical aura", "in an epic pose", "casting-mastered"]
         }
     }
 
     class_effect = ""
     for cls in class_info:
         if cls in class_effects:
-            class_effect = class_effects[cls][experience_level]
+            class_effect = random.choice(class_effects[cls][experience_level])
             break
 
-    prompt = f"A {level_details[experience_level]} {experience_level} {class_desc}, {weapon_desc}, {armor_desc}, {features_desc}, {accessories_desc}, {class_effect}, {battle_damage}, {aura_effects}, {magical_effects}, in a traditional adventure pose, in a {environment} on a {atmosphere} {time_of_day}. All weapons must be properly positioned in the character's hands or appropriate holsters/sheaths. Character must be depicted in an appropriate and respectful manner with proper weapon placement. Full body portrait, highly detailed illustration, epic lighting, dramatic composition."
+    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {weapon_desc}, {armor_desc}, {features_desc}, {accessories_desc}, {class_effect}, {battle_damage}, {aura_effects}, {magical_effects}, in a {environment} on a {atmosphere} {time_of_day}. All weapons must be properly positioned in the character's hands or sheaths. Character must be depicted in a respectful manner with proper weapon placement. Full body portrait, highly detailed illustration, epic lighting, dramatic composition."
 
     return prompt
 
