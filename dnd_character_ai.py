@@ -90,7 +90,7 @@ def create_prompt(character):
     if weapons:
         weapon_terms = {
             "Sword": ["sword", "longsword", "steel sword"],
-            "Bow": ["composite bow", "longbow", "hunting bow"],
+            "Bow": ["composite bow with quiver of arrows", "longbow with quiver of arrows", "hunting bow with quiver of arrows"],
             "Dagger": ["dagger", "short dagger", "throwing dagger"],
             "Axe": ["battle axe", "war axe", "two-handed axe"],
             "Staff": ["magical staff", "arcane staff", "spellcasting staff"]
@@ -124,15 +124,34 @@ def create_prompt(character):
 
     accessories = []
     if "Ranger" in class_info:
-        accessories.extend(["map and compass", "animal companion", "hunting gear"])
+        accessories.extend([
+            "leather-bound map case with compass",
+            "trail rations and water skin",
+            "weather-worn cloak with hood",
+            "survival tools and herbs",
+            "tracking journal with sketches"
+        ])
     if "Sorcerer" in class_info:
-        accessories.extend(["magical orb", "arcane focus", "spellbook"])
+        accessories.extend([
+            "ornate spellbook with glowing runes",
+            "pouch of magical components",
+            "enchanted amulet with protective wards",
+            "mystical scroll case",
+            "arcane focus crystal"
+        ])
     if "Fighter" in class_info:
-        accessories.extend(["shield with emblem", "battle gear"])
+        accessories.extend([
+            "utility belt with potions",
+            "tactical map case",
+            "honor badge or medal",
+            "battle journal",
+            "whetstone and oil"
+        ])
 
     accessories_desc = ""
     if accessories:
-        accessories_desc = f"with {', '.join(random.sample(accessories, min(2, len(accessories))))}"
+        selected_accessories = random.sample(accessories, min(2, len(accessories)))
+        accessories_desc = f"with {', '.join(selected_accessories)}"
 
     environments = {
         "Fighter": ["castle courtyard", "training grounds", "battlefield", "arena"],
@@ -188,35 +207,69 @@ def create_prompt(character):
 
     class_effects = {
         "Fighter": {
-            "novice": ["with basic combat stance", "in a fighting pose", "ready for battle"],
-            "experienced": ["with expert combat stance", "in a warrior's pose", "battle-ready"],
-            "veteran": ["with masterful combat stance", "in a veteran's pose", "battle-hardened"],
-            "master": ["with legendary combat stance", "in a master's pose", "battle-perfected"],
-            "legendary": ["with divine combat stance", "in an epic pose", "battle-transcended"]
+            "level_novice": ["with basic combat stance", "in a fighting pose", "ready for battle"],
+            "level_experienced": ["with expert combat stance", "in a warrior's pose", "battle-ready"],
+            "level_veteran": ["with masterful combat stance", "in a veteran's pose", "battle-hardened"],
+            "level_master": ["with legendary combat stance", "in a master's pose", "battle-perfected"],
+            "level_legendary": ["with divine combat stance", "in an epic pose", "battle-transcended"],
+            "Battle Master": "A tactical commander in battle-worn armor, their presence commanding respect. Their strategic mind evident in their confident stance and tactical positioning.",
+            "Eldritch Knight": "A warrior-mage with arcane runes glowing on their armor. Their weapon pulses with magical energy, and arcane sigils float in the air around them.",
+            "Champion": "A paragon of martial excellence in gleaming armor. Their every movement exudes confidence and mastery of combat.",
+            "Arcane Archer": "An expert marksman with a magical longbow. Their arrows trail magical energy, and arcane markings pulse on their armor."
         },
         "Ranger": {
-            "novice": ["with basic tracking skills", "in a hunting pose", "ready to track"],
-            "experienced": ["with expert tracking skills", "in a ranger's pose", "tracking-ready"],
-            "veteran": ["with masterful tracking skills", "in a veteran's pose", "tracking-perfected"],
-            "master": ["with legendary tracking skills", "in a master's pose", "tracking-transcended"],
-            "legendary": ["with divine tracking skills", "in an epic pose", "tracking-mastered"]
+            "level_novice": ["with basic tracking skills", "in a hunting pose", "ready to track"],
+            "level_experienced": ["with expert tracking skills", "in a ranger's pose", "tracking-ready"],
+            "level_veteran": ["with masterful tracking skills", "in a veteran's pose", "tracking-perfected"],
+            "level_master": ["with legendary tracking skills", "in a master's pose", "tracking-transcended"],
+            "level_legendary": ["with divine tracking skills", "in an epic pose", "tracking-mastered"],
+            "Beast Master": "A wilderness expert with their loyal animal companion. Their deep connection with nature evident in their calm demeanor and animal-like instincts.",
+            "Hunter": "A specialized monster hunter with trophies from legendary beasts. Their keen eyes and precise movements show their expertise in tracking and hunting.",
+            "Gloom Stalker": "A shadowy hunter who moves like a ghost. Their dark armor blends with shadows, and their eyes glow with eerie light.",
+            "Swarmkeeper": "A nature-bound warrior surrounded by a magical swarm of creatures. Their connection to nature is visible in their glowing eyes and floating nature spirits."
         },
         "Sorcerer": {
-            "novice": ["with basic magical aura", "in a casting pose", "ready to cast"],
-            "experienced": ["with expert magical aura", "in a sorcerer's pose", "casting-ready"],
-            "veteran": ["with masterful magical aura", "in a veteran's pose", "casting-perfected"],
-            "master": ["with legendary magical aura", "in a master's pose", "casting-transcended"],
-            "legendary": ["with divine magical aura", "in an epic pose", "casting-mastered"]
+            "level_novice": ["with basic magical aura", "in a casting pose", "ready to cast"],
+            "level_experienced": ["with expert magical aura", "in a sorcerer's pose", "casting-ready"],
+            "level_veteran": ["with masterful magical aura", "in a veteran's pose", "casting-perfected"],
+            "level_master": ["with legendary magical aura", "in a master's pose", "casting-transcended"],
+            "level_legendary": ["with divine magical aura", "in an epic pose", "casting-mastered"],
+            "Draconic Bloodline": "A sorcerer with draconic features - subtle scales and glowing eyes. Their magic takes the form of their draconic ancestor's element, with wings of pure magic.",
+            "Wild Magic": "A sorcerer surrounded by chaotic, colorful magical energy. Random magical effects float around them, showing the unpredictable nature of their power.",
+            "Storm Sorcery": "A storm-wielder with crackling lightning and swirling winds. Their hair floats as if caught in a storm, and their eyes glow with storm energy.",
+            "Shadow Magic": "A shadow-wreathed sorcerer partially shrouded in darkness. Their form flickers between solid and shadow, with dark magical energy swirling around them."
         }
     }
 
     class_effect = ""
+    subclass_effect = ""
     for cls in class_info:
         if cls in class_effects:
-            class_effect = random.choice(class_effects[cls][experience_level])
-            break
+            # Seviye bazlı efektleri al
+            level_key = f"level_{experience_level}"
+            if level_key in class_effects[cls]:
+                class_effect = random.choice(class_effects[cls][level_key])
+            
+            # Alt sınıf efektlerini kontrol et
+            for subclass in subclass_info:
+                if subclass in class_effects[cls]:
+                    subclass_effect = class_effects[cls][subclass]
+                    break
+            if subclass_effect:
+                break
 
-    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {weapon_desc}, {armor_desc}, {features_desc}, {accessories_desc}, {class_effect}, {battle_damage}, {aura_effects}, {magical_effects}, in a {environment} on a {atmosphere} {time_of_day}. All weapons must be properly positioned in the character's hands or sheaths. Character must be depicted in a respectful manner with proper weapon placement. Full body portrait, highly detailed illustration, epic lighting, dramatic composition."
+    # Ekipman ve çevre efektlerini birleştir
+    equipment_effects = []
+    if weapons:
+        equipment_effects.append(weapon_desc)
+    if armor_items:
+        equipment_effects.append(armor_desc)
+    if accessories:
+        equipment_effects.append(accessories_desc)
+
+    environment_effect = f"in a {environment} on a {atmosphere} {time_of_day}"
+
+    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {', '.join(equipment_effects)}, {features_desc}, {class_effect}, {subclass_effect}, {battle_damage}, {aura_effects}, {magical_effects}, {environment_effect}. All weapons must be properly positioned in the character's hands or sheaths. Character must be depicted in a respectful manner with proper weapon placement. Full body portrait, highly detailed illustration, epic lighting, dramatic composition."
 
     return prompt
 
