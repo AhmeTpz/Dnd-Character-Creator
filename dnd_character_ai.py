@@ -238,10 +238,10 @@ def create_prompt(character):
             "level_veteran": ["with masterful combat stance", "in a veteran's pose", "battle-hardened"],
             "level_master": ["with legendary combat stance", "in a master's pose", "battle-perfected"],
             "level_legendary": ["with divine combat stance", "in an epic pose", "battle-transcended"],
-            "Battle Master": "A tactical commander in battle-worn armor, their presence commanding respect. Their strategic mind evident in their confident stance and tactical positioning.",
-            "Eldritch Knight": "A warrior-mage with arcane runes glowing on their armor. Their weapon pulses with magical energy, and arcane sigils float in the air around them.",
-            "Champion": "A paragon of martial excellence in gleaming armor. Their every movement exudes confidence and mastery of combat.",
-            "Arcane Archer": "An expert marksman with a magical longbow. Their arrows trail magical energy, and arcane markings pulse on their armor."
+            "Battle Master": "A fighter with tactical markings on their armor.",
+            "Eldritch Knight": "A fighter with glowing magical runes on their skin.",
+            "Champion": "A fighter with a perfect warrior's stance.",
+            "Arcane Archer": "A fighter with magical energy in their eyes."
         },
         "Ranger": {
             "level_novice": ["with basic tracking skills", "in a hunting pose", "ready to track"],
@@ -249,10 +249,10 @@ def create_prompt(character):
             "level_veteran": ["with masterful tracking skills", "in a veteran's pose", "tracking-perfected"],
             "level_master": ["with legendary tracking skills", "in a master's pose", "tracking-transcended"],
             "level_legendary": ["with divine tracking skills", "in an epic pose", "tracking-mastered"],
-            "Beast Master": "A wilderness expert with their loyal animal companion. Their deep connection with nature evident in their calm demeanor and animal-like instincts.",
-            "Hunter": "A specialized monster hunter with trophies from legendary beasts. Their keen eyes and precise movements show their expertise in tracking and hunting.",
-            "Gloom Stalker": "A shadowy hunter who moves like a ghost. Their dark armor blends with shadows, and their eyes glow with eerie light.",
-            "Swarmkeeper": "A nature-bound warrior surrounded by a magical swarm of creatures. Their connection to nature is visible in their glowing eyes and floating nature spirits."
+            "Beast Master": "A ranger with a wolf companion beside them.",
+            "Hunter": "A ranger with animal trophies on their belt.",
+            "Gloom Stalker": "A ranger with dark face paint.",
+            "Swarmkeeper": "A ranger with magical insects around them."
         },
         "Sorcerer": {
             "level_novice": ["with basic magical aura", "in a casting pose", "ready to cast"],
@@ -260,10 +260,10 @@ def create_prompt(character):
             "level_veteran": ["with masterful magical aura", "in a veteran's pose", "casting-perfected"],
             "level_master": ["with legendary magical aura", "in a master's pose", "casting-transcended"],
             "level_legendary": ["with divine magical aura", "in an epic pose", "casting-mastered"],
-            "Draconic Bloodline": "A sorcerer with draconic features - subtle scales and glowing eyes. Their magic takes the form of their draconic ancestor's element, with wings of pure magic.",
-            "Wild Magic": "A sorcerer surrounded by chaotic, colorful magical energy. Random magical effects float around them, showing the unpredictable nature of their power.",
-            "Storm Sorcery": "A storm-wielder with crackling lightning and swirling winds. Their hair floats as if caught in a storm, and their eyes glow with storm energy.",
-            "Shadow Magic": "A shadow-wreathed sorcerer partially shrouded in darkness. Their form flickers between solid and shadow, with dark magical energy swirling around them."
+            "Draconic Bloodline": "A sorcerer with dragon scales on their skin.",
+            "Wild Magic": "A sorcerer covered in colorful magical energy.",
+            "Storm Sorcery": "A sorcerer covered in crackling lightning.",
+            "Shadow Magic": "A sorcerer covered in shadows."
         }
     }
 
@@ -295,7 +295,7 @@ def create_prompt(character):
 
     environment_effect = f"in a {environment} on a {atmosphere} {time_of_day}"
 
-    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {', '.join(equipment_effects)}, {features_desc}, {accessories_desc}, {class_effect}, {subclass_effect}, {battle_damage}, {aura_effects}, {magical_effects}, {environment_effect}. Ultra realistic, octane render, unreal engine 5, highly detailed, dramatic lighting, volumetric lighting, ray tracing, subsurface scattering, 8k resolution, sharp focus, intricate details, realistic textures, cinematic composition, full body character visible from head to toe, professional photography, color grading."
+    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {', '.join(equipment_effects)}, {features_desc}, {accessories_desc}, {class_effect}, {subclass_effect}, {battle_damage}, {aura_effects}, {magical_effects}, {environment_effect}. Ultra realistic, photorealistic portrait full body, highly detailed facial features, natural lighting, realistic textures, proper proportions, realistic skin tones, natural expressions, professional photography lighting, 8k resolution, sharp focus, intricate details, cinematic composition, full body character visible from head to toe, professional photography, color grading."
 
     return prompt
 
