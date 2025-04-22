@@ -1,0 +1,7 @@
+fal-client==0.1.0
+Pillow==10.2.0
+requests==2.31.0
+tkinter
+python-dotenv==1.0.0 
+numpy==1.26.4
+pandas==2.2.1
