@@ -33,11 +33,11 @@ def create_prompt(character):
     races = {
         "Human": "human",
         "Elf": "elf with pointy ears",
-        "Dwarf": "dwarf with beard",
+        "Dwarf": "dwarf",
         "Half-Elf": "half-elf with pointy ears",
         "Half-Orc": "green-skinned half-orc",
         "Tiefling": f"{tiefling_color}-skinned humanoid with long curved horns, glowing eyes, a pointed tail, and infernal features",
-        "Dragonborn": "tall muscular humanoid with a dragon head, reptilian eyes, scaled body, clawed hands, and no tail"
+        "Dragonborn": "dragon-headed humanoid with reptilian eyes, scaled body, clawed hands, and a muscular build, clearly showing their draconic heritage"
     }
 
     # Cinsiyet ve fiziksel özellikler
@@ -89,17 +89,43 @@ def create_prompt(character):
     weapon_desc = ""
     if weapons:
         weapon_terms = {
-            "Sword": ["sword", "longsword", "steel sword"],
-            "Bow": ["composite bow with quiver of arrows", "longbow with quiver of arrows", "hunting bow with quiver of arrows"],
-            "Dagger": ["dagger", "short dagger", "throwing dagger"],
-            "Axe": ["battle axe", "war axe", "two-handed axe"],
-            "Staff": ["magical staff", "arcane staff", "spellcasting staff"]
+            "Sword": {
+                "positions": ["in hand", "on their back", "sheathed at their side"],
+                "descriptions": ["steel longsword", "broadsword", "sword"]
+            },
+            "Bow": {
+                "positions": ["in hand", "on their back"],
+                "descriptions": ["composite bow", "longbow", "hunting bow"]
+            },
+            "Dagger": {
+                "positions": ["in hand", "sheathed at their side", "sheathed at their waist"],
+                "descriptions": ["dagger", "throwing dagger", "short dagger"]
+            },
+            "Axe": {
+                "positions": ["in hand", "on their back", "sheathed at their side"],
+                "descriptions": ["battle axe", "war axe", "two-handed axe"]
+            },
+            "Staff": {
+                "positions": ["in hand", "on their back"],
+                "descriptions": ["magical staff", "arcane staff", "spellcasting staff"]
+            }
         }
-        weapon_list = [random.choice(weapon_terms.get(w, [w.lower()])) for w in weapons]
-        if len(weapons) > 1:
-            weapon_desc = f"carrying {' and '.join(weapon_list)}, each weapon properly stored in its sheath or held in hand"
-        else:
-            weapon_desc = f"wielding {' and '.join(weapon_list)}"
+        
+        weapon_list = []
+        for weapon in weapons:
+            if weapon in weapon_terms:
+                desc = random.choice(weapon_terms[weapon]["descriptions"])
+                pos = random.choice(weapon_terms[weapon]["positions"])
+                weapon_list.append(f"a {desc} {pos}")
+            else:
+                weapon_list.append(f"a {weapon.lower()} in hand")
+        
+        # Yay için özel durum - eğer yay varsa ve sırtında değilse, sadak ekle
+        for i, weapon in enumerate(weapons):
+            if weapon == "Bow" and "on their back" not in weapon_list[i]:
+                weapon_list[i] += " and a quiver on their back"
+        
+        weapon_desc = " and ".join(weapon_list)
 
     armor_desc = ""
     if armor_items:
@@ -198,7 +224,7 @@ def create_prompt(character):
         magical_effects = "with powerful magical energy swirling around them"
 
     level_details = {
-        "novice": ["young and eager", "new adventurer", "beginner warrior"],
+        "novice": ["young and inexperienced", "untested adventurer", "beginner warrior"],
         "experienced": ["confident and battle-hardened", "seasoned adventurer", "skilled warrior"],
         "veteran": ["seasoned and battle-scarred", "experienced adventurer", "battle-tested warrior"],
         "master": ["renowned and formidable", "master adventurer", "epic warrior"],
@@ -207,8 +233,8 @@ def create_prompt(character):
 
     class_effects = {
         "Fighter": {
-            "level_novice": ["with basic combat stance", "in a fighting pose", "ready for battle"],
-            "level_experienced": ["with expert combat stance", "in a warrior's pose", "battle-ready"],
+            "level_novice": ["with uncertain combat stance", "in a nervous fighting pose", "hesitantly ready for battle"],
+            "level_experienced": ["with confident combat stance", "in a warrior's pose", "battle-ready"],
             "level_veteran": ["with masterful combat stance", "in a veteran's pose", "battle-hardened"],
             "level_master": ["with legendary combat stance", "in a master's pose", "battle-perfected"],
             "level_legendary": ["with divine combat stance", "in an epic pose", "battle-transcended"],
@@ -269,7 +295,7 @@ def create_prompt(character):
 
     environment_effect = f"in a {environment} on a {atmosphere} {time_of_day}"
 
-    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {', '.join(equipment_effects)}, {features_desc}, {class_effect}, {subclass_effect}, {battle_damage}, {aura_effects}, {magical_effects}, {environment_effect}. All weapons must be properly positioned in the character's hands or sheaths. Character must be depicted in a respectful manner with proper weapon placement. Full body portrait, highly detailed illustration, epic lighting, dramatic composition."
+    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {', '.join(equipment_effects)}, {features_desc}, {accessories_desc}, {class_effect}, {subclass_effect}, {battle_damage}, {aura_effects}, {magical_effects}, {environment_effect}. Ultra realistic, octane render, unreal engine 5, highly detailed, dramatic lighting, volumetric lighting, ray tracing, subsurface scattering, 8k resolution, sharp focus, intricate details, realistic textures, cinematic composition, full body character visible from head to toe, professional photography, color grading."
 
     return prompt
 
