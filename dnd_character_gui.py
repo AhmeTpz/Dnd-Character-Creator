@@ -4,9 +4,6 @@ from PIL import Image, ImageTk
 import os
 from dnd_character_decorator import *
 
-# ===================================================
-# MAIN APPLICATION CLASS / ANA UYGULAMA SINIFI
-# ===================================================
 class CharacterApp:
     def __init__(self, root):
         self.root = root
@@ -15,7 +12,6 @@ class CharacterApp:
         self.root.geometry("1200x900")
         self.character = None
         self.images = {}
-
         self.create_widgets()
 
     def load_image(self, name, size=(100, 100), folders=None):
@@ -63,9 +59,6 @@ class CharacterApp:
         frame.pack(side="left", padx=10, pady=10, expand=True)
         return frame
 
-# ===================================================
-# UI COMPONENTS / ARAYÜZ BİLEŞENLERİ
-# ===================================================
     def create_widgets(self):
         main = tk.Frame(self.root, bg="#1e1e1e")
         main.pack(expand=True, fill="both", padx=20, pady=20)
@@ -99,7 +92,7 @@ class CharacterApp:
         weapon_inner.pack(anchor="center")
         for weapon in ["Sword", "Bow", "Dagger", "Axe", "Staff"]:
             self.create_equipment_button(weapon_inner, weapon, weapon, self.add_weapon,
-                                         folders=["equipments"], img_size=(50, 50))
+                                      folders=["equipments"], img_size=(50, 50))
 
         armor_frame = tk.LabelFrame(main, text="Zırh Seç", bg="#1e1e1e", fg="white")
         armor_frame.pack(fill="x", pady=10)
@@ -107,11 +100,8 @@ class CharacterApp:
         armor_inner.pack(anchor="center")
         for armor in ["Hat", "Helmet", "Chain Armor", "Knight Armor", "Leather Boots", "Plate Boots"]:
             self.create_equipment_button(armor_inner, armor, armor, self.add_armor,
-                                         folders=["equipments"], img_size=(50, 50))
+                                      folders=["equipments"], img_size=(50, 50))
 
-# ===================================================
-# CHARACTER MANAGEMENT / KARAKTER YÖNETİMİ
-# ===================================================
     def select_class(self, cls):
         self.character = {"Fighter": Fighter(), "Ranger": Ranger(), "Sorcerer": Sorcerer()}[cls]
         self.level_bonus = {"Fighter": 2, "Ranger": 2, "Sorcerer": 3}[cls]
