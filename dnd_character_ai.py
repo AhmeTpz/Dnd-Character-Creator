@@ -295,7 +295,7 @@ def create_prompt(character):
 
     environment_effect = f"in a {environment} on a {atmosphere} {time_of_day}"
 
-    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {', '.join(equipment_effects)}, {features_desc}, {accessories_desc}, {class_effect}, {subclass_effect}, {battle_damage}, {aura_effects}, {magical_effects}, {environment_effect}. Ultra realistic, photorealistic full bodyportrait, highly detailed facial features, natural lighting, realistic textures, proper proportions, realistic skin tones, natural expressions, professional photography lighting, 8k resolution, sharp focus, intricate details, cinematic composition, full body character visible from head to toe, professional photography, color grading."
+    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {', '.join(equipment_effects)}, {features_desc}, {accessories_desc}, {class_effect}, {subclass_effect}, {battle_damage}, {aura_effects}, {magical_effects}, {environment_effect}. Ultra realistic, full body photorealistic, highly detailed facial features, natural lighting, realistic textures, proper proportions, realistic skin tones, natural expressions, professional photography lighting, 8k resolution, sharp focus, intricate details, cinematic composition, full body character visible from head to toe, professional photography, color grading."
 
     return prompt
 
