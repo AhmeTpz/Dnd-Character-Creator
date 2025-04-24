@@ -36,8 +36,8 @@ def create_prompt(character):
         "Dwarf": "dwarf",
         "Half-Elf": "half-elf with pointy ears",
         "Half-Orc": "green-skinned half-orc",
-        "Tiefling": f"{tiefling_color}-skinned humanoid with long curved horns, glowing eyes, a pointed tail, and infernal features",
-        "Dragonborn": "dragon-like humanoid with scaled reptilian skin (full body), draconic facial features including a snout and sharp teeth, a long muscular tail, clawed hands and feet, and a powerful draconic build"
+        "Tiefling": f"{tiefling_color}-skinned humanoid with long curved horns, glowing eyes, a pointed tail, and infernal features.",
+        "Dragonborn": "dragon-like humanoid with scaled reptilian skin (full body), draconic facial features including a snout and sharp teeth, a long muscular tail, clawed hands and feet, and a powerful draconic build."
     }
 
     # Cinsiyet ve fiziksel özellikler
@@ -51,6 +51,7 @@ def create_prompt(character):
     gender = random.choice(list(genders.keys()))
     gender_desc = genders[gender]
 
+    # Class ve subclass bilgilerini topla
     class_info = []
     if "Fighter" in description:
         class_info.append("Fighter")
@@ -59,20 +60,21 @@ def create_prompt(character):
     if "Sorcerer" in description:
         class_info.append("Sorcerer")
 
+    # Tüm subclass'ları belirle
+    all_subclasses = {
+        "Fighter": ["Battle Master", "Eldritch Knight", "Champion", "Arcane Archer"],
+        "Ranger": ["Beast Master", "Hunter", "Gloom Stalker", "Swarmkeeper"],
+        "Sorcerer": ["Draconic Bloodline", "Wild Magic", "Storm Sorcery", "Shadow Magic"]
+    }
+
     subclass_info = []
-    subclasses = [
-        "Battle Master", "Eldritch Knight", "Champion", "Arcane Archer",
-        "Beast Master", "Hunter", "Gloom Stalker", "Swarmkeeper",
-        "Draconic Bloodline", "Wild Magic", "Storm Sorcery", "Shadow Magic"
-    ]
+    for cls, subclasses in all_subclasses.items():
+        for subclass in subclasses:
+            if subclass in description:
+                subclass_info.append((cls, subclass))  # Class ve subclass'ı birlikte saklıyoruz
 
-    for subclass in subclasses:
-        if subclass in description:
-            subclass_info.append(subclass)
-
-    class_desc = f"{race_desc} {gender_desc} {' + '.join(class_info)}"
-    if subclass_info:
-        class_desc += f" + {' + '.join(subclass_info)}"
+    class_desc = f"{gender_desc} {race_desc}"
+    # Subclass'ları prompt'a eklemeyi kaldırıyoruz
 
     weapons = []
     armor_items = []
@@ -113,16 +115,19 @@ def create_prompt(character):
         
         weapon_list = []
         for weapon in weapons:
-            if weapon in weapon_terms:
-                desc = random.choice(weapon_terms[weapon]["descriptions"])
-                pos = random.choice(weapon_terms[weapon]["positions"])
-                weapon_list.append(f"a {desc} {pos}")
-            else:
-                weapon_list.append(f"a {weapon.lower()} in hand")
+            for weapon_type in weapon_types:
+                if weapon_type in weapon:
+                    if weapon_type in weapon_terms:
+                        desc = random.choice(weapon_terms[weapon_type]["descriptions"])
+                        pos = random.choice(weapon_terms[weapon_type]["positions"])
+                        weapon_list.append(f"a {desc} {pos}")
+                    else:
+                        weapon_list.append(f"a {weapon.lower()} in hand")
+                    break
         
         # Yay için özel durum - eğer yay varsa ve sırtında değilse, sadak ekle
-        for i, weapon in enumerate(weapons):
-            if weapon == "Bow" and "on their back" not in weapon_list[i]:
+        for i, weapon in enumerate(weapon_list):
+            if "bow" in weapon.lower() and "on their back" not in weapon:
                 weapon_list[i] += " and a quiver on their back"
         
         weapon_desc = " and ".join(weapon_list)
@@ -137,7 +142,14 @@ def create_prompt(character):
             "Leather Boots": ["leather boots", "traveling boots", "adventurer's boots"],
             "Plate Boots": ["metal boots", "steel boots", "knight's boots"]
         }
-        armor_list = [random.choice(armor_terms.get(a, [a.lower()])) for a in armor_items]
+        
+        armor_list = []
+        for armor in armor_items:
+            for armor_type in armor_types:
+                if armor_type in armor:
+                    armor_list.append(random.choice(armor_terms.get(armor_type, [armor_type.lower()])))
+                    break
+                    
         armor_desc = f"wearing {', '.join(armor_list)}"
 
     hair_colors = ["black", "brown", "blonde", "red", "white", "silver", "blue", "purple", "green"]
@@ -149,30 +161,31 @@ def create_prompt(character):
     features_desc = f"with {hair_color} hair and {eye_color} eyes"
 
     accessories = []
-    if "Ranger" in class_info:
-        accessories.extend([
-            "leather-bound map case with compass",
-            "trail rations and water skin",
-            "weather-worn cloak with hood",
-            "survival tools and herbs",
-            "tracking journal with sketches"
-        ])
-    if "Sorcerer" in class_info:
-        accessories.extend([
-            "ornate spellbook with glowing runes",
-            "pouch of magical components",
-            "enchanted amulet with protective wards",
-            "mystical scroll case",
-            "arcane focus crystal"
-        ])
-    if "Fighter" in class_info:
-        accessories.extend([
-            "utility belt with potions",
-            "tactical map case",
-            "honor badge or medal",
-            "battle journal",
-            "whetstone and oil"
-        ])
+    for cls in class_info:
+        if cls == "Ranger":
+            accessories.extend([
+                "leather-bound map case with compass",
+                "trail rations and water skin",
+                "weather-worn cloak with hood",
+                "survival tools and herbs",
+                "tracking journal with sketches"
+            ])
+        elif cls == "Sorcerer":
+            accessories.extend([
+                "ornate spellbook with glowing runes",
+                "pouch of magical components",
+                "enchanted amulet with protective wards",
+                "mystical scroll case",
+                "arcane focus crystal"
+            ])
+        elif cls == "Fighter":
+            accessories.extend([
+                "utility belt with potions",
+                "tactical map case",
+                "honor badge or medal",
+                "battle journal",
+                "whetstone and oil"
+            ])
 
     accessories_desc = ""
     if accessories:
@@ -238,10 +251,10 @@ def create_prompt(character):
             "level_veteran": ["with masterful combat stance", "in a veteran's pose", "battle-hardened"],
             "level_master": ["with legendary combat stance", "in a master's pose", "battle-perfected"],
             "level_legendary": ["with divine combat stance", "in an epic pose", "battle-transcended"],
-            "Battle Master": "A fighter with tactical markings on their armor.",
-            "Eldritch Knight": "A fighter with weapons covered in blue magical energy and enchanted runes.",
-            "Champion": "A fighter with a proud and confident stance, wearing ornate armor.",
-            "Arcane Archer": "A fighter with glowing blue magical energy in their eyes, leaving blue light trails."
+            "Battle Master": "Tactical markings on their armor",
+            "Eldritch Knight": "Weapons covered in blue magical energy and enchanted runes",
+            "Champion": "Proud and confident stance, wearing ornate armor",
+            "Arcane Archer": "Glowing blue magical energy in their eyes, leaving blue light trails"
         },
         "Ranger": {
             "level_novice": ["with basic tracking skills", "in a hunting pose", "ready to track"],
@@ -249,10 +262,10 @@ def create_prompt(character):
             "level_veteran": ["with masterful tracking skills", "in a veteran's pose", "tracking-perfected"],
             "level_master": ["with legendary tracking skills", "in a master's pose", "tracking-transcended"],
             "level_legendary": ["with divine tracking skills", "in an epic pose", "tracking-mastered"],
-            "Beast Master": "A ranger with a wolf companion beside them.",
-            "Hunter": "A ranger wearing green leather clothes and a hooded cloak, in Robin Hood style.",
-            "Gloom Stalker": "A ranger with a dark and shadowy appearance, wearing a black mask and having a scar on their eye.",
-            "Swarmkeeper": "A ranger surrounded by glowing magical fireflies."
+            "Beast Master": "With a wolf companion beside them",
+            "Hunter": "Wearing green leather clothes and a hooded cloak",
+            "Gloom Stalker": "Dark and shadowy appearance, wearing a black mask and having a scar on their eye",
+            "Swarmkeeper": "Surrounded by glowing magical fireflies"
         },
         "Sorcerer": {
             "level_novice": ["with basic magical aura", "in a casting pose", "ready to cast"],
@@ -260,29 +273,30 @@ def create_prompt(character):
             "level_veteran": ["with masterful magical aura", "in a veteran's pose", "casting-perfected"],
             "level_master": ["with legendary magical aura", "in a master's pose", "casting-transcended"],
             "level_legendary": ["with divine magical aura", "in an epic pose", "casting-mastered"],
-            "Draconic Bloodline": "A sorcerer with dragon wings on their back, having an ancient appearance.",
-            "Wild Magic": "A sorcerer with a malevolent and powerful appearance, surrounded by red and black magical energy.",
-            "Storm Sorcery": "A sorcerer covered in crackling lightning.",
-            "Shadow Magic": "A sorcerer covered in shadows."
+            "Draconic Bloodline": "With dragon wings on the back, having an ancient appearance",
+            "Wild Magic": "Malevolent and powerful appearance, surrounded by red and black magical energy",
+            "Storm Sorcery": "Covered in crackling lightning",
+            "Shadow Magic": "Covered in shadows"
         }
     }
 
-    class_effect = ""
-    subclass_effect = ""
+    # Class etkilerini topluyoruz
+    class_effect_list = []
     for cls in class_info:
         if cls in class_effects:
             # Seviye bazlı efektleri al
             level_key = f"level_{experience_level}"
             if level_key in class_effects[cls]:
-                class_effect = random.choice(class_effects[cls][level_key])
-            
-            # Alt sınıf efektlerini kontrol et
-            for subclass in subclass_info:
-                if subclass in class_effects[cls]:
-                    subclass_effect = class_effects[cls][subclass]
-                    break
-            if subclass_effect:
-                break
+                class_effect_list.append(random.choice(class_effects[cls][level_key]))
+
+    # Tüm subclass efektlerini topluyoruz
+    subclass_effect_list = []
+    for cls, subclass in subclass_info:
+        if cls in class_effects and subclass in class_effects[cls]:
+            subclass_effect_list.append(class_effects[cls][subclass])
+
+    class_effect = ", ".join(class_effect_list) if class_effect_list else ""
+    subclass_effect = ", ".join(subclass_effect_list) if subclass_effect_list else ""
 
     # Ekipman ve çevre efektlerini birleştir
     equipment_effects = []
@@ -290,12 +304,30 @@ def create_prompt(character):
         equipment_effects.append(weapon_desc)
     if armor_items:
         equipment_effects.append(armor_desc)
-    if accessories:
+    if accessories_desc:
         equipment_effects.append(accessories_desc)
 
+    equipment_effects_joined = ", ".join(filter(None, equipment_effects))
+    
     environment_effect = f"in a {environment} on a {atmosphere} {time_of_day}"
 
-    prompt = f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}, {', '.join(equipment_effects)}, {features_desc}, {accessories_desc}, {class_effect}, {subclass_effect}, {battle_damage}, {aura_effects}, {magical_effects}, {environment_effect}. Full body shot, dynamic pose, action stance, full character visible from head to toe, professional photography lighting, 8k resolution, sharp focus, intricate details, cinematic composition, professional photography, color grading, ultra realistic, photorealistic, highly detailed facial features, natural lighting, realistic textures, proper proportions, realistic skin tones, natural expressions."
+    # Tüm efektleri birleştiriyoruz ve boş olanları filtreleyelim
+    all_effects = [
+        f"A {random.choice(level_details[experience_level])} {experience_level} {class_desc}",
+        equipment_effects_joined,
+        features_desc,
+        class_effect,
+        subclass_effect,
+        battle_damage,
+        aura_effects,
+        magical_effects,
+        environment_effect
+    ]
+
+    # Boş string'leri kaldır
+    filtered_effects = [effect for effect in all_effects if effect]
+    
+    prompt = ", ".join(filtered_effects) + ". Full body shot, dynamic pose, action stance, full character visible from head to toe, professional photography lighting, 8k resolution, sharp focus, intricate details, cinematic composition, professional photography, color grading, ultra realistic, photorealistic, highly detailed facial features, natural lighting, realistic textures, proper proportions, realistic skin tones, natural expressions, only one character in the image."
 
     return prompt
 
