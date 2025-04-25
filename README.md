@@ -29,8 +29,9 @@ DnD Character Creator, masaüstü bir uygulama olarak, Dungeons & Dragons (D&D) 
 
 ## 🚀 Kurulum
 
+- 🖼️ Görsel oluşturmak için fal.ai üzerinden aldığınız tokeni dnd_character_ai.py içindeki API_KEY'e ekleyin.
 ```bash
 git clone https://github.com/AhmeTpz/DnD-Character-Creator.git
 cd DnD-Character-Creator
 pip install -r requirements.txt
-python dnd_character_gui.py
+python dnd_character_gui_with_ai.py

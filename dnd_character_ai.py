@@ -8,7 +8,7 @@ import requests
 from io import BytesIO
 import random
 
-API_KEY = "7d4cd77d-93a4-44c3-b0e0-d9e5b62e666e:f4eb507827d9182b1dcaf697a357493f"
+API_KEY = "TOKENI EKLEYIN!"
 
 # ===================================================
 # CHARACTER PROMPT GENERATION / KARAKTER PROMPT OLUŞTURMA
