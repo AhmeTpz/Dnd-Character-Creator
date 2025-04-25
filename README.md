@@ -16,7 +16,7 @@ DnD Character Creator, masaüstü bir uygulama olarak, Dungeons & Dragons (D&D) 
 
 | Karakter Oluşturma | AI Destekli Görsel |
 |--------------------|--------------------|
-| ![interface](./GUI.png) | ![ai-image](./generated_images/character_image_1745166911.png) |
+| ![interface](./GUI.png) | ![ai-image](./generated_images/character_image_1745443702.png) |
 
 ## 🧠 Kullanılan Teknolojiler
 
